@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FSB_PaR FileMaker Pro — End of May 2026 Progress Report</title>
+  <style>
+    :root {
+      --navy: #17324d;
+      --blue: #2364aa;
+      --sky: #d9ecff;
+      --green: #2e8b57;
+      --green-soft: #dff4e8;
+      --amber: #b87503;
+      --amber-soft: #fff1cc;
+      --red: #c0392b;
+      --red-soft: #ffe1dd;
+      --purple: #7353ba;
+      --purple-soft: #eee8ff;
+      --cream: #fffaf0;
+      --paper: #ffffff;
+      --ink: #202124;
+      --muted: #5b6470;
+      --line: #d8dee8;
+      --shadow: 0 12px 28px rgba(23, 50, 77, 0.15);
+      --radius: 22px;
+      --focus: #ffbf47;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      font-family: Arial, Verdana, sans-serif;
+      background: linear-gradient(135deg, #eef7ff 0%, #fffaf0 42%, #f1ebff 100%);
+      color: var(--ink);
+      line-height: 1.55;
+      font-size: 18px;
+    }
+
+    .page {
+      width: min(1180px, calc(100% - 28px));
+      margin: 0 auto;
+      padding: 22px 0 54px;
+    }
+
+    header.hero {
+      background: linear-gradient(135deg, var(--navy), #2b5876 55%, var(--purple));
+      color: white;
+      border-radius: 30px;
+      padding: 30px;
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+    }
+
+    header.hero::after {
+      content: "";
+      position: absolute;
+      right: -70px;
+      top: -70px;
+      width: 220px;
+      height: 220px;
+      background: rgba(255, 255, 255, 0.12);
+      border-radius: 50%;
+    }
+
+    .kicker {
+      display: inline-block;
+      background: rgba(255,255,255,.16);
+      border: 1px solid rgba(255,255,255,.3);
+      padding: 8px 14px;
+      border-radius: 999px;
+      font-size: 0.92rem;
+      font-weight: 700;
+      letter-spacing: .02em;
+      margin-bottom: 12px;
+    }
+
+    h1 {
+      font-size: clamp(2rem, 4vw, 4rem);
+      line-height: 1.05;
+      margin: 8px 0 12px;
+      max-width: 880px;
+    }
+
+    .hero p {
+      max-width: 840px;
+      font-size: 1.16rem;
+      margin: 0;
+    }
+
+    .hero-actions,
+    .utility-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 22px;
+    }
+
+    button, .btn-link {
+      border: 0;
+      cursor: pointer;
+      font: inherit;
+      font-weight: 800;
+      border-radius: 999px;
+      padding: 12px 18px;
+      min-height: 48px;
+      box-shadow: 0 8px 16px rgba(0,0,0,.12);
+      transition: transform .12s ease, box-shadow .12s ease, background .12s ease;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    button:hover, .btn-link:hover { transform: translateY(-1px); box-shadow: 0 12px 20px rgba(0,0,0,.16); }
+    button:focus-visible, a:focus-visible { outline: 4px solid var(--focus); outline-offset: 3px; }
+
+    .primary { background: #ffffff; color: var(--navy); }
+    .secondary { background: #ffe08a; color: #2a1d00; }
+    .blue { background: var(--blue); color: #fff; }
+    .green { background: var(--green); color: #fff; }
+    .amber { background: var(--amber); color: #fff; }
+    .red { background: var(--red); color: #fff; }
+    .purple { background: var(--purple); color: #fff; }
+    .ghost { background: #f4f7fb; color: var(--navy); border: 1px solid var(--line); box-shadow: none; }
+
+    .skip-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin: 18px 0;
+    }
+
+    .skim-card {
+      background: var(--paper);
+      border-radius: var(--radius);
+      padding: 18px;
+      border: 2px solid var(--line);
+      box-shadow: var(--shadow);
+      min-height: 178px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .skim-card h2 {
+      font-size: 1.2rem;
+      margin: 0 0 8px;
+    }
+
+    .skim-card p {
+      margin: 0 0 14px;
+      color: var(--muted);
+      font-weight: 650;
+    }
+
+    .tag {
+      display: inline-block;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: .88rem;
+      font-weight: 900;
+      letter-spacing: .02em;
+    }
+
+    .tag-green { background: var(--green-soft); color: #145c35; }
+    .tag-amber { background: var(--amber-soft); color: #714700; }
+    .tag-red { background: var(--red-soft); color: #8c2018; }
+    .tag-blue { background: var(--sky); color: #173f73; }
+    .tag-purple { background: var(--purple-soft); color: #4b2f91; }
+
+    .section {
+      background: rgba(255,255,255,.94);
+      border-radius: 28px;
+      margin-top: 20px;
+      border: 2px solid rgba(23, 50, 77, .1);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 18px 22px;
+      color: white;
+    }
+
+    .section-header h2 {
+      margin: 0;
+      font-size: clamp(1.35rem, 2.2vw, 2.1rem);
+    }
+
+    .section-header p {
+      margin: 2px 0 0;
+      opacity: .92;
+      font-weight: 650;
+    }
+
+    .section-body {
+      padding: 22px;
+      display: none;
+      animation: fade .18s ease;
+    }
+
+    .section.open .section-body { display: block; }
+
+    @keyframes fade { from { opacity: .4; transform: translateY(-3px); } to { opacity: 1; transform: translateY(0); } }
+
+    .header-blue { background: linear-gradient(135deg, var(--blue), #3586d6); }
+    .header-green { background: linear-gradient(135deg, var(--green), #51a877); }
+    .header-amber { background: linear-gradient(135deg, var(--amber), #db9b24); }
+    .header-red { background: linear-gradient(135deg, var(--red), #e05c4c); }
+    .header-purple { background: linear-gradient(135deg, var(--purple), #9671dc); }
+    .header-navy { background: linear-gradient(135deg, var(--navy), #2b5876); }
+
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+
+    .info-box {
+      border-radius: 20px;
+      padding: 16px;
+      border: 2px solid var(--line);
+      background: #fff;
+    }
+
+    .info-box h3 {
+      margin: 0 0 8px;
+      font-size: 1.15rem;
+    }
+
+    .info-box p { margin: 0; color: var(--muted); }
+
+    ul.clean {
+      margin: 10px 0 0;
+      padding-left: 1.2rem;
+    }
+
+    ul.clean li { margin: 8px 0; }
+
+    .status-table {
+      display: grid;
+      gap: 12px;
+    }
+
+    .status-row {
+      display: grid;
+      grid-template-columns: 110px 1fr;
+      gap: 12px;
+      align-items: start;
+      background: #fff;
+      border: 2px solid var(--line);
+      border-radius: 18px;
+      padding: 14px;
+    }
+
+    .status-dot {
+      border-radius: 999px;
+      padding: 8px 10px;
+      color: #fff;
+      font-weight: 900;
+      text-align: center;
+    }
+
+    .dot-green { background: var(--green); }
+    .dot-amber { background: var(--amber); }
+    .dot-red { background: var(--red); }
+
+    .timeline {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .month {
+      background: #fff;
+      border: 2px solid var(--line);
+      border-radius: 20px;
+      padding: 16px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .month::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 8px;
+      width: 100%;
+      background: var(--blue);
+    }
+
+    .month:nth-child(2)::before { background: var(--green); }
+    .month:nth-child(3)::before { background: var(--amber); }
+    .month:nth-child(4)::before { background: var(--purple); }
+
+    .month h3 { margin: 8px 0 8px; font-size: 1.25rem; }
+    .month p { margin: 0; color: var(--muted); font-weight: 650; }
+
+    .big-callout {
+      background: linear-gradient(135deg, #fff8d6, #ffffff);
+      border: 3px solid #ffd766;
+      border-radius: 24px;
+      padding: 18px;
+      font-size: 1.1rem;
+      font-weight: 750;
+    }
+
+    .progress-wrap {
+      margin-top: 22px;
+      background: rgba(255,255,255,.18);
+      border: 1px solid rgba(255,255,255,.28);
+      padding: 12px;
+      border-radius: 18px;
+      max-width: 650px;
+    }
+
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      font-weight: 900;
+      margin-bottom: 8px;
+    }
+
+    .progress-bar {
+      background: rgba(255,255,255,.25);
+      border-radius: 999px;
+      height: 22px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      width: 72%;
+      height: 100%;
+      background: linear-gradient(90deg, #76e09a, #ffe08a);
+      border-radius: 999px;
+    }
+
+    .small-note {
+      color: var(--muted);
+      font-size: .96rem;
+      margin-top: 10px;
+    }
+
+    .footer {
+      margin-top: 22px;
+      background: #fff;
+      border: 2px solid var(--line);
+      border-radius: 22px;
+      padding: 18px;
+      color: var(--muted);
+      font-size: .96rem;
+    }
+
+    .print-only { display: none; }
+
+    @media (max-width: 900px) {
+      .skip-grid, .grid-3, .timeline { grid-template-columns: 1fr 1fr; }
+      .grid-2 { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 620px) {
+      body { font-size: 16px; }
+      .skip-grid, .timeline { grid-template-columns: 1fr; }
+      .section-header { align-items: stretch; flex-direction: column; }
+      .status-row { grid-template-columns: 1fr; }
+      header.hero { padding: 22px; }
+    }
+
+    @media print {
+      body { background: #fff; font-size: 12pt; }
+      .page { width: 100%; padding: 0; }
+      header.hero, .section, .skim-card, .footer { box-shadow: none; }
+      button, .hero-actions, .utility-actions { display: none !important; }
+      .skip-grid { grid-template-columns: repeat(2, 1fr); }
+      .section-body { display: block !important; }
+      .section { break-inside: avoid; page-break-inside: avoid; }
+      .print-only { display: block; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="hero">
+      <span class="kicker">End of May 2026 report • FSB_PaR FileMaker Pro</span>
+      <h1>Phase 1 build is mostly through the construction stage.</h1>
+      <p>The project has moved from building core layout pairs into data integrity, saved-record protection, ReportingCode setup, cleanup, and handover preparation.</p>
+      <div class="progress-wrap" aria-label="Project readiness estimate">
+        <div class="progress-label"><span>Testing handover readiness</span><span>On track for September 2026</span></div>
+        <div class="progress-bar"><div class="progress-fill"></div></div>
+      </div>
+      <div class="hero-actions">
+        <a class="btn-link primary" href="#skim">10-second skim</a>
+        <button class="secondary" onclick="openAll()">Open all details</button>
+        <button class="primary" onclick="closeAll()">Close all details</button>
+        <button class="primary" onclick="window.print()">Print / Save as PDF</button>
+      </div>
+    </header>
+
+    <main>
+      <section id="skim" class="skip-grid" aria-label="10 second skim cards">
+        <article class="skim-card">
+          <div>
+            <span class="tag tag-green">GREEN</span>
+            <h2>Core Phase 1 screens</h2>
+            <p>Functionally good enough for Phase 1.</p>
+          </div>
+          <a class="btn-link green" href="#status">Read status</a>
+        </article>
+        <article class="skim-card">
+          <div>
+            <span class="tag tag-amber">AMBER</span>
+            <h2>Main work now</h2>
+            <p>Data Integrity Audit, saved-record protection, and cleanup.</p>
+          </div>
+          <a class="btn-link amber" href="#next">Read next work</a>
+        </article>
+        <article class="skim-card">
+          <div>
+            <span class="tag tag-red">RED RISK</span>
+            <h2>Biggest risks</h2>
+            <p>Editable saved records and missing real ReportingCode lists.</p>
+          </div>
+          <a class="btn-link red" href="#risks">Read risks</a>
+        </article>
+        <article class="skim-card">
+          <div>
+            <span class="tag tag-purple">TARGET</span>
+            <h2>Testing handover</h2>
+            <p>September 2026, possibly sooner if dependencies clear.</p>
+          </div>
+          <a class="btn-link purple" href="#timeline">Read timeline</a>
+        </article>
+      </section>
+
+      <section id="summary" class="section open">
+        <div class="section-header header-blue">
+          <div>
+            <h2>1. One-page summary</h2>
+            <p>Plain version for anyone allergic to long reports.</p>
+          </div>
+          <button class="primary" onclick="toggleSection('summary')">Show / hide</button>
+        </div>
+        <div class="section-body">
+          <div class="big-callout">
+            At the end of May and entering June, FSB_PaR has reached a major milestone: the main Phase 1 layout pairs are functionally built and good enough for Phase 1. The project has now moved from layout building into data integrity, system cleanup, setup data preparation, future import, and handover preparation.
+          </div>
+          <div class="grid-3" style="margin-top:16px;">
+            <div class="info-box"><h3>What this means</h3><p>The visible working screens are mostly in place.</p></div>
+            <div class="info-box"><h3>What it does not mean</h3><p>The system is not production-ready yet. Nobody gets to pretend otherwise. Tragic, but healthy.</p></div>
+            <div class="info-box"><h3>Current direction</h3><p>Protect data, prepare codes, clean rough edges, and build training material.</p></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="completed" class="section">
+        <div class="section-header header-green">
+          <div>
+            <h2>2. Completed in May</h2>
+            <p>Main completed areas, not every tiny screw and spring.</p>
+          </div>
+          <button class="primary" onclick="toggleSection('completed')">Read details</button>
+        </div>
+        <div class="section-body">
+          <div class="grid-2">
+            <div class="info-box"><h3>Pursuits</h3><p>Entry and Review layouts are built and functionally closed.</p></div>
+            <div class="info-box"><h3>Bonuses</h3><p>Entry and Review layouts, plus export function, are functionally good enough for Phase 1.</p></div>
+            <div class="info-box"><h3>TimeEntries</h3><p>Entry layout, Review layout, Save/Cancel scripts, and export script are built and closed.</p></div>
+            <div class="info-box"><h3>ReportingCodes schema</h3><p>A generic controlled code table was built for CostCode, PayrollCode, and future code families if needed.</p></div>
+            <div class="info-box"><h3>ReportingCodes admin layouts</h3><p>Entry and Review layouts for managing codes were promoted to Phase 1 and closed.</p></div>
+            <div class="info-box"><h3>Review / export work</h3><p>Export-to-Excel workflows were wired and tested where built for the newer modules.</p></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="status" class="section open">
+        <div class="section-header header-navy">
+          <div>
+            <h2>3. Current status</h2>
+            <p>Traffic-light view for fast decision reading.</p>
+          </div>
+          <button class="primary" onclick="toggleSection('status')">Show / hide</button>
+        </div>
+        <div class="section-body">
+          <div class="status-table">
+            <div class="status-row">
+              <div class="status-dot dot-green">GREEN</div>
+              <div><strong>Core Phase 1 layout pairs:</strong> Companies, Employees, Projects, PayPeriods, EmployeePayRates, EmployeeCompanyAssignments, Pursuits, Bonuses, TimeEntries, and ReportingCodes are functionally good enough for Phase 1.</div>
+            </div>
+            <div class="status-row">
+              <div class="status-dot dot-green">GREEN</div>
+              <div><strong>ReportingCodes foundation:</strong> The schema and admin pair are built, giving the project a place to manage accounting and payroll codes.</div>
+            </div>
+            <div class="status-row">
+              <div class="status-dot dot-amber">AMBER</div>
+              <div><strong>Data Integrity Audit:</strong> In progress. The focus is field classification, read-only protections, and correction/void/supersede workflows.</div>
+            </div>
+            <div class="status-row">
+              <div class="status-dot dot-amber">AMBER</div>
+              <div><strong>Employee Pay Rates:</strong> First saved-record protection pattern is being designed here. If it gets awkward, it may affect the wider timetable, because naturally one field can start a constitutional crisis.</div>
+            </div>
+            <div class="status-row">
+              <div class="status-dot dot-red">RED</div>
+              <div><strong>Saved-record protection:</strong> Saved records need protection from casual editing before structured user/bookkeeper testing.</div>
+            </div>
+            <div class="status-row">
+              <div class="status-dot dot-red">RED</div>
+              <div><strong>ReportingCode data:</strong> Real CostCode and PayrollCode lists must be supplied or confirmed by Sandy/Cindy before meaningful TimeEntries code-selection testing.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="risks" class="section">
+        <div class="section-header header-red">
+          <div>
+            <h2>4. Main risks before testing handover</h2>
+            <p>The awkward bits that must not be brushed under the office carpet.</p>
+          </div>
+          <button class="primary" onclick="toggleSection('risks')">Read details</button>
+        </div>
+        <div class="section-body">
+          <ul class="clean">
+            <li><strong>Saved records must be protected from casual editing.</strong> Users should not be able to overwrite historical, payroll, time-entry, bonus, or setup data without control.</li>
+            <li><strong>Correction, void, and supersede workflows need finishing.</strong> Legitimate changes should be tracked rather than typed over old values.</li>
+            <li><strong>Real ReportingCode records are still needed.</strong> Sandy/Cindy must supply or confirm the actual CostCode and PayrollCode lists.</li>
+            <li><strong>The first saved-record protection pattern is still being designed.</strong> EmployeePayRates is the first target, and complexity there may affect the rest of the audit.</li>
+            <li><strong>Wording, spelling, help popovers, and export instructions still need polish.</strong> Humans read labels, sadly, so labels must behave.</li>
+            <li><strong>User/bookkeeper training material is still needed.</strong> Especially for searching, exporting, Save As behaviour, ReportingCodes setup, and correction workflow.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="next" class="section">
+        <div class="section-header header-amber">
+          <div>
+            <h2>5. Next work planned</h2>
+            <p>The practical route from built screens to testing handover.</p>
+          </div>
+          <button class="primary" onclick="toggleSection('next')">Read details</button>
+        </div>
+        <div class="section-body">
+          <ol class="clean">
+            <li>Complete the Phase 1 Data Integrity Audit / Fix Pass.</li>
+            <li>Implement saved-record protection where approved.</li>
+            <li>Add or confirm controlled workflows such as Supersede, Void, Close, Reopen, Retire, Mark Posted, or similar where needed.</li>
+            <li>Prepare and import real ReportingCodes once the source lists are confirmed.</li>
+            <li>Complete cleanup and handover-readiness checks.</li>
+            <li>Prepare simple user/bookkeeper training material.</li>
+            <li>Start controlled testing handover.</li>
+          </ol>
+        </div>
+      </section>
+
+      <section id="timeline" class="section open">
+        <div class="section-header header-purple">
+          <div>
+            <h2>6. Predicted timeline to first testing handover</h2>
+            <p>Target: September 2026, possibly sooner if dependencies clear smoothly.</p>
+          </div>
+          <button class="primary" onclick="toggleSection('timeline')">Show / hide</button>
+        </div>
+        <div class="section-body">
+          <div class="timeline">
+            <div class="month"><h3>June</h3><p>Data Integrity Audit and saved-record protection.</p></div>
+            <div class="month"><h3>July</h3><p>Cleanup, ReportingCodes setup, training draft, and internal checks.</p></div>
+            <div class="month"><h3>August</h3><p>Polish, test scripts, manager/bookkeeper review preparation.</p></div>
+            <div class="month"><h3>September</h3><p>First structured testing handover.</p></div>
+          </div>
+          <p class="small-note"><strong>Earlier limited review may be possible</strong> if no major data-integrity issues appear and the required ReportingCode/source information arrives promptly.</p>
+        </div>
+      </section>
+
+      <section id="conclusion" class="section open">
+        <div class="section-header header-blue">
+          <div>
+            <h2>7. Plain conclusion</h2>
+            <p>Short, sharp, boss-safe wording.</p>
+          </div>
+          <button class="primary" onclick="toggleSection('conclusion')">Show / hide</button>
+        </div>
+        <div class="section-body">
+          <div class="big-callout">
+            The project currently appears on track for a September 2026 structured testing handover. Hitting this target depends mainly on completing saved-record protection, controlled correction workflows, ReportingCode setup, cleanup, and basic user/bookkeeper training. If these are completed without major complications, an earlier limited review may be possible.
+          </div>
+        </div>
+      </section>
+
+      <div class="utility-actions">
+        <a class="btn-link blue" href="#skim">Back to top skim</a>
+        <button class="ghost" onclick="openAll()">Open all details</button>
+        <button class="ghost" onclick="closeAll()">Close all details</button>
+        <button class="ghost" onclick="window.print()">Print / Save as PDF</button>
+      </div>
+
+      <footer class="footer">
+        <strong>Source note:</strong> Built from the FSB_PaR project status at the end of May/start of June 2026. This is a testing-handover progress report, not a production-readiness claim. Because apparently that sentence has to exist before someone somewhere starts booking training around unfinished workflows.
+      </footer>
+    </main>
+  </div>
+
+  <script>
+    function toggleSection(id) {
+      const section = document.getElementById(id);
+      section.classList.toggle('open');
+      if (section.classList.contains('open')) {
+        section.scrollIntoView({behavior: 'smooth', block: 'start'});
+      }
+    }
+
+    function openAll() {
+      document.querySelectorAll('.section').forEach(s => s.classList.add('open'));
+    }
+
+    function closeAll() {
+      document.querySelectorAll('.section').forEach(s => s.classList.remove('open'));
+      ['summary','status','timeline','conclusion'].forEach(id => document.getElementById(id).classList.add('open'));
+      document.getElementById('skim').scrollIntoView({behavior: 'smooth', block: 'start'});
+    }
+  </script>
+</body>
+</html>
