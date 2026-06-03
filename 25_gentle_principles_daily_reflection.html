@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>25 Gentle Principles</title>
+  <style>
+    :root {
+      --ink: #25182e;
+      --muted: #65536f;
+      --paper: rgba(255,255,255,0.82);
+      --paper-strong: rgba(255,255,255,0.94);
+      --accent: #7c3aed;
+      --accent-2: #f472b6;
+      --accent-3: #22d3ee;
+      --shadow: 0 24px 80px rgba(37, 24, 46, 0.22);
+      --radius: 32px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      font-family: "Trebuchet MS", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 10% 15%, rgba(244, 114, 182, 0.48), transparent 28%),
+        radial-gradient(circle at 85% 12%, rgba(34, 211, 238, 0.45), transparent 28%),
+        radial-gradient(circle at 80% 85%, rgba(250, 204, 21, 0.32), transparent 30%),
+        linear-gradient(135deg, #fdf2f8 0%, #eef2ff 44%, #ecfeff 100%);
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.35) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.35) 1px, transparent 1px);
+      background-size: 42px 42px;
+      pointer-events: none;
+      mask-image: linear-gradient(to bottom, black, transparent 90%);
+    }
+
+    .app {
+      width: min(980px, 100%);
+      min-height: 100vh;
+      margin: 0 auto;
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      position: relative;
+      z-index: 1;
+    }
+
+    header {
+      background: rgba(255,255,255,0.55);
+      backdrop-filter: blur(18px);
+      border: 1px solid rgba(255,255,255,0.65);
+      border-radius: 26px;
+      box-shadow: 0 12px 45px rgba(37, 24, 46, 0.12);
+      padding: 18px 18px 14px;
+    }
+
+    .brand {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+    }
+
+    h1 {
+      font-size: clamp(1.6rem, 6vw, 3.6rem);
+      line-height: 0.95;
+      margin: 0;
+      letter-spacing: -0.06em;
+    }
+
+    .subtitle {
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-size: clamp(0.98rem, 2.6vw, 1.18rem);
+      max-width: 720px;
+    }
+
+    .spark {
+      font-size: clamp(2rem, 8vw, 4.5rem);
+      filter: drop-shadow(0 8px 14px rgba(124,58,237,.22));
+      user-select: none;
+    }
+
+    .progress-wrap {
+      margin-top: 14px;
+      height: 12px;
+      background: rgba(255,255,255,0.7);
+      border-radius: 999px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.7);
+    }
+
+    .progress {
+      width: 4%;
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2), var(--accent-3));
+      transition: width 0.35s ease;
+    }
+
+    main {
+      flex: 1;
+      display: grid;
+      place-items: center;
+      min-height: 560px;
+    }
+
+    .card {
+      width: min(860px, 100%);
+      min-height: min(600px, calc(100vh - 250px));
+      background: var(--paper);
+      border: 1px solid rgba(255,255,255,0.78);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: clamp(24px, 5vw, 52px);
+      position: relative;
+      overflow: hidden;
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      backdrop-filter: blur(20px);
+      animation: floatIn 0.34s ease both;
+    }
+
+    .card.active { display: flex; }
+
+    .card-glow {
+      position: absolute;
+      inset: -20% -10% auto auto;
+      width: 320px;
+      height: 320px;
+      background: radial-gradient(circle, rgba(244,114,182,0.34), transparent 68%);
+      pointer-events: none;
+    }
+
+    .topline {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .day-pill {
+      display: inline-flex;
+      align-items: center;
+      width: fit-content;
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: rgba(124, 58, 237, 0.12);
+      color: #5b21b6;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+      font-size: 0.92rem;
+    }
+
+    .icon {
+      font-size: clamp(2.2rem, 7vw, 4rem);
+    }
+
+    h2 {
+      position: relative;
+      z-index: 1;
+      font-size: clamp(2.15rem, 8vw, 5rem);
+      line-height: 0.95;
+      margin: 0 0 22px;
+      letter-spacing: -0.065em;
+      max-width: 760px;
+    }
+
+    .principle {
+      position: relative;
+      z-index: 1;
+      font-size: clamp(1.15rem, 3vw, 1.65rem);
+      line-height: 1.45;
+      color: #3f2c49;
+      margin: 0 0 24px;
+      max-width: 780px;
+    }
+
+    .question-box {
+      position: relative;
+      z-index: 1;
+      background: var(--paper-strong);
+      border: 2px solid rgba(124,58,237,0.14);
+      border-radius: 24px;
+      padding: 20px;
+      box-shadow: 0 14px 34px rgba(37,24,46,0.1);
+      margin-top: 4px;
+    }
+
+    .label {
+      margin: 0 0 6px;
+      color: #7c3aed;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.09em;
+      font-weight: 900;
+    }
+
+    .question {
+      margin: 0;
+      font-size: clamp(1.28rem, 4vw, 2rem);
+      line-height: 1.25;
+      font-weight: 900;
+    }
+
+    .tiny-practice {
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: clamp(0.96rem, 2.4vw, 1.08rem);
+      line-height: 1.45;
+      position: relative;
+      z-index: 1;
+    }
+
+    .controls {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      gap: 10px;
+      background: rgba(255,255,255,0.58);
+      backdrop-filter: blur(18px);
+      border: 1px solid rgba(255,255,255,0.7);
+      border-radius: 24px;
+      padding: 12px;
+      box-shadow: 0 12px 45px rgba(37, 24, 46, 0.12);
+    }
+
+    button, select {
+      font: inherit;
+    }
+
+    button {
+      border: 0;
+      border-radius: 18px;
+      padding: 14px 16px;
+      background: #25182e;
+      color: white;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 0 10px 24px rgba(37,24,46,0.18);
+      transition: transform 0.16s ease, opacity 0.16s ease;
+    }
+
+    button:hover { transform: translateY(-1px); }
+    button:active { transform: translateY(1px); }
+    button:disabled { opacity: 0.35; cursor: not-allowed; }
+
+    .back { justify-self: start; }
+    .next { justify-self: end; background: linear-gradient(135deg, #7c3aed, #f472b6); }
+
+    .selector {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 800;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    select {
+      border: 1px solid rgba(124,58,237,0.2);
+      border-radius: 14px;
+      padding: 10px 12px;
+      background: rgba(255,255,255,0.9);
+      color: var(--ink);
+      font-weight: 800;
+      max-width: 150px;
+    }
+
+    footer {
+      color: var(--muted);
+      text-align: center;
+      font-size: 0.92rem;
+      padding: 4px 10px 18px;
+    }
+
+    footer strong { color: var(--ink); }
+
+    .help-note {
+      background: rgba(255,255,255,0.64);
+      border: 1px solid rgba(255,255,255,0.7);
+      border-radius: 22px;
+      padding: 14px 16px;
+      color: var(--muted);
+      line-height: 1.45;
+      font-size: 0.98rem;
+      box-shadow: 0 8px 28px rgba(37,24,46,0.08);
+    }
+
+    .help-note strong {
+      color: var(--ink);
+    }
+
+    @keyframes floatIn {
+      from { opacity: 0; transform: translateY(10px) scale(0.99); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    @media (max-width: 620px) {
+      .app { padding: 12px; }
+      header { padding: 16px; }
+      main { min-height: 560px; }
+      .card {
+        min-height: calc(100vh - 260px);
+        border-radius: 26px;
+      }
+      .controls {
+        grid-template-columns: 1fr 1fr;
+      }
+      .selector {
+        grid-column: 1 / -1;
+        justify-content: center;
+        grid-row: 1;
+      }
+      .back { grid-column: 1; grid-row: 2; width: 100%; }
+      .next { grid-column: 2; grid-row: 2; width: 100%; }
+    }
+
+    @media print {
+      body { background: white; }
+      header, .controls, footer, .help-note { display: none; }
+      .app { padding: 0; }
+      main { display: block; min-height: auto; }
+      .card {
+        display: flex !important;
+        min-height: 100vh;
+        page-break-after: always;
+        box-shadow: none;
+        border: 0;
+        border-radius: 0;
+        background: white;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <div class="brand">
+        <div>
+          <h1>25 Gentle Principles</h1>
+          <p class="subtitle">A calm daily reflection journey about change, confidence, boundaries, and becoming yourself.</p>
+        </div>
+        <div class="spark" aria-hidden="true">🌈</div>
+      </div>
+      <div class="progress-wrap" aria-hidden="true"><div class="progress" id="progress"></div></div>
+    </header>
+
+    <div class="help-note">
+      <strong>How to use this:</strong> read one card each day. You do not have to believe anything. Take what helps, leave what does not, and never let any idea become more important than your safety.
+    </div>
+
+    <main id="deck">
+      
+      <section class="card" data-card="1" aria-label="Principle 1: Change is normal">
+        <div class="card-glow"></div>
+        <div class="topline">
+          <span class="day-pill">Day 1 of 25</span>
+          <span class="icon" aria-hidden="true">🌱</span>
+        </div>
+        <h2>Change is normal</h2>
+        <p class="principle">Life changes. Feelings change. People change. A bad chapter is not the whole book.</p>
+        <div class="question-box">
+          <p class="label">Today’s question</p>
+          <p class="question">What is one thing in me that is changing right now?</p>
+        </div>
+        <div class="tiny-practice">
+          <strong>One-minute pause:</strong> Put both feet on the floor. Take three slow breaths. No fixing. No performing. Just notice.
+        </div>
+      </section>
+    
+
+      <section class="card" data-card="2" aria-label="Principle 2: I do not need to know everything today">
+        <div class="card-glow"></div>
+        <div class="topline">
+          <span class="day-pill">Day 2 of 25</span>
+          <span class="icon" aria-hidden="true">🌙</span>
+        </div>
+        <h2>I do not need to know everything today</h2>
+        <p class="principle">Uncertainty is uncomfortable, but it does not mean I am unsafe. I can take life one honest step at a time.</p>
+        <div class="question-box">
+          <p class="label">Today’s question</p>
+          <p class="question">What can I leave unanswered for now?</p>
+        </div>
+        <div class="tiny-practice">
+          <strong>One-minute pause:</strong> Put both feet on the floor. Take three slow breaths. No fixing. No performing. Just notice.
+        </div>
+      </section>
+    
+
+      <section class="card" data-card="3" aria-label="Principle 3: Small steps count">
+        <div class="card-glow"></div>
+        <div class="topline">
+          <span class="day-pill">Day 3 of 25</span>
+          <span class="icon" aria-hidden="true">🐾</span>
+        </div>
+        <h2>Small steps count</h2>
+        <p class="principle">Big healing usually happens through small, repeated steps. Tiny progress is still progress, even when it refuses to look dramatic.</p>
+        <div class="question-box">
+          <p class="label">Today’s question</p>
+          <p class="question">What is one small good step I can take today?</p>
+        </div>
+        <div class="tiny-practice">
+          <strong>One-minute pause:</strong> Put both feet on the floor. Take three slow breaths. No fixing. No performing. Just notice.
+        </div>
+      </section>
+    
+
+      <section class="card" data-card="4" aria-label="Principle 4: I can pause before reacting">
+        <div class="card-glow"></div>
+        <div class="topline">
+          <span class="day-pill">Day 4 of 25</span>
+          <span class="icon" aria-hidden="true">⏸️</span>
+        </div>
+        <h2>I can pause before reacting</h2>
+        <p class="principle">A pause gives me back choice. I do not have to answer, agree, explain, or decide instantly.</p>
+        <div class="question-box">
+          <p class="label">Today’s question</p>
+          <p class="question">Where could I use a pause this week?</p>
+        </div>
+        <div class="tiny-practice">
+          <strong>One-minute pause:</strong> Put both feet on the floor. Take three slow breaths. No fixing. No performing. Just notice.
+        </div>
+      </section>
+    
+
+      <section class="card" data-card="5" aria-label="Principle 5: My body gives me information">
+        <div class="card-glow"></div>
+        <div class="topline">
+          <span class="day-pill">Day 5 of 25</span>
+          <span class="icon" aria-hidden="true">💛</span>
+        </div>
+        <h2>My body gives me information</h2>
+        <p class="principle">Tension, tiredness, dread, calm, and relief are signals worth noticing. My body is not silly for reacting.</p>
+        <div class="question-box">
+          <p class="label">Today’s question</p>
+          <p class="question">What is my body trying to tell me today?</p>
+        </div>
+        <div class="tiny-practice">
+          <strong>One-minute pause:</strong> Put both feet on the floor. Take three slow breaths. No fixing. No performing. Just notice.
+        </div>
+      </section>
+    
+
+      <section class="card" data-card="6" aria-label="Principle 6: I am allowed to say no">
+        <div class="card-glow"></div>
+        <div class="topline">
+          <span class="day-pill">Day 6 of 25</span>
+          <span class="icon" aria-hidden="true">🛑</span>
+        </div>
+        <h2>I am allowed to say no</h2>
+        <p class="principle">A wise or loving person does not need to control me. My no is allowed to exist.</p>
+        <div class="question-box">
+          <p class="label">Today’s question</p>
+          <p class="question">Where do I need a stronger no?</p>
+        </div>
+        <div class="tiny-practice">
+          <strong>One-minute pause:</strong> Put both feet on the floor. Take three slow breaths. No fixing. No performing. Just notice.
+        </div>
+      </section>
+    
+
+      <section class="card" data-card="7" aria-label="Principle 7: Trust grows slowly">
+        <div class="card-glow"></div>
+        <div class="topline">
+          <span class="day-pill">Day 7 of 25</span>
+          <span class="icon" aria-hidden="true">🕯️</span>
+        </div>
+        <h2>Trust grows slowly</h2>
+        <p class="principle">Real trust is proven over time. It is not demanded, rushed, or used as a test of loyalty.</p>
+        <div class="question-box">
+          <p class="label">Today’s question</p>
+          <p class="question">Who has earned a little trust, and who has not?</p>
+        </div>
+        <div class="tiny-practice">
+          <strong>One-minute pause:</strong> Put both feet on the floor. Take three slow breaths. No fixing. No performing. Just notice.
+        </div>
+      </section>
+    
+
+      <section class="card" data-card="8" aria-label="Principle 8: Kindness is not weakness">
+        <div class="card-glow"></div>
+        <div class="topline">
+          <span class="day-pill">Day 8 of 25</span>
+          <span class="icon" aria-hidden="true">🦋</span>
+        </div>
+        <h2>Kindness is not weakness</h2>
+        <p class="principle">I can be kind and still have boundaries. I do not need to make myself smaller to be good.</p>
+        <div class="question-box">
+          <p class="label">Today’s question</p>
+          <p class="question">How can I be kind without giving myself away?</p>
+        </div>
+        <div class="tiny-practice">
+          <strong>One-minute pause:</strong> Put both feet on the floor. Take three slow breaths. No fixing. No performing. Just notice.
+        </div>
+      </section>
+    
+
+      <section class="card" data-card="9" aria-label="Principle 9: Not every voice deserves entry">
+        <div class="card-glow"></div>
+        <div class="topline">
+          <span class="day-pill">Day 9 of 25</span>
+          <span class="icon" aria-hidden="true">🎧</span>
+        </div>
+        <h2>Not every voice deserves entry</h2>
+        <p class="principle">Some people bring peace. Some people bring confusion. I can notice the difference.</p>
+        <div class="question-box">
+          <p class="label">Today’s question</p>
+          <p class="question">Who leaves me feeling more like myself?</p>
+        </div>
+        <div class="tiny-practice">
+          <strong>One-minute pause:</strong> Put both feet on the floor. Take three slow breaths. No fixing. No performing. Just notice.
+        </div>
+      </section>
+    
+
+      <section class="card" data-card="10" aria-label="Principle 10: I can belong without disappearing">
+        <div class="card-glow"></div>
+        <div class="topline">
+          <span class="day-pill">Day 10 of 25</span>
+          <span class="icon" aria-hidden="true">✨</span>
+        </div>
+        <h2>I can belong without disappearing</h2>
+        <p class="principle">Healthy groups make room for my thoughts, questions, personality, and boundaries.</p>
+        <div class="question-box">
+          <p class="label">Today’s question</p>
+          <p class="question">Where do I feel free to be myself?</p>
+        </div>
+        <div class="tiny-practice">
+          <strong>One-minute pause:</strong> Put both feet on the floor. Take three slow breaths. No fixing. No performing. Just notice.
+        </div>
+      </section>
+    
+
+      <section class="card" data-card="11" aria-label="Principle 11: Questions are healthy">
+        <div class="card-glow"></div>
+        <div class="topline">
+          <span class="day-pill">Day 11 of 25</span>
+          <span class="icon" aria-hidden="true">❔</span>
+        </div>
+        <h2>Questions are healthy</h2>
+        <p class="principle">A safe person, idea, or group can handle questions. Control is what fears questions.</p>
+        <div class="question-box">
+          <p class="label">Today’s question</p>
+          <p class="question">What question am I allowed to ask now?</p>
+        </div>
+        <div class="tiny-practice">
+          <strong>One-minute pause:</strong> Put both feet on the floor. Take three slow breaths. No fixing. No performing. Just notice.
+        </div>
+      </section>
+    
+
+      <section class="card" data-card="12" aria-label="Principle 12: Shame is not wisdom">
+        <div class="card-glow"></div>
+        <div class="topline">
+          <span class="day-pill">Day 12 of 25</span>
+          <span class="icon" aria-hidden="true">🌦️</span>
+        </div>
+        <h2>Shame is not wisdom</h2>
+        <p class="principle">Shame tries to shrink me. Wisdom helps me grow. They are not the same thing.</p>
+        <div class="question-box">
+          <p class="label">Today’s question</p>
+          <p class="question">Is this thought helping me grow, or just hurting me?</p>
+        </div>
+        <div class="tiny-practice">
+          <strong>One-minute pause:</strong> Put both feet on the floor. Take three slow breaths. No fixing. No performing. Just notice.
+        </div>
+      </section>
+    
+
+      <section class="card" data-card="13" aria-label="Principle 13: I do not need to be perfect to be loved">
+        <div class="card-glow"></div>
+        <div class="topline">
+          <span class="day-pill">Day 13 of 25</span>
+          <span class="icon" aria-hidden="true">💐</span>
+        </div>
+        <h2>I do not need to be perfect to be loved</h2>
+        <p class="principle">Perfection is a trap with better marketing. I am allowed to be human and still worthy of care.</p>
+        <div class="question-box">
+          <p class="label">Today’s question</p>
+          <p class="question">What part of me needs gentleness today?</p>
+        </div>
+        <div class="tiny-practice">
+          <strong>One-minute pause:</strong> Put both feet on the floor. Take three slow breaths. No fixing. No performing. Just notice.
+        </div>
+      </section>
+    
+
+      <section class="card" data-card="14" aria-label="Principle 14: Courage can be quiet">
+        <div class="card-glow"></div>
+        <div class="topline">
+          <span class="day-pill">Day 14 of 25</span>
+          <span class="icon" aria-hidden="true">🫶</span>
+        </div>
+        <h2>Courage can be quiet</h2>
+        <p class="principle">Courage is not always loud. Sometimes it is getting out of bed, telling the truth, or asking for help.</p>
+        <div class="question-box">
+          <p class="label">Today’s question</p>
+          <p class="question">What quiet courage have I already shown?</p>
+        </div>
+        <div class="tiny-practice">
+          <strong>One-minute pause:</strong> Put both feet on the floor. Take three slow breaths. No fixing. No performing. Just notice.
+        </div>
+      </section>
+    
+
+      <section class="card" data-card="15" aria-label="Principle 15: I can learn from pain without worshipping it">
+        <div class="card-glow"></div>
+        <div class="topline">
+          <span class="day-pill">Day 15 of 25</span>
+          <span class="icon" aria-hidden="true">🪷</span>
+        </div>
+        <h2>I can learn from pain without worshipping it</h2>
+        <p class="principle">Pain may teach me something, but it does not get to rule my life.</p>
+        <div class="question-box">
+          <p class="label">Today’s question</p>
+          <p class="question">What did I learn that can protect me now?</p>
+        </div>
+        <div class="tiny-practice">
+          <strong>One-minute pause:</strong> Put both feet on the floor. Take three slow breaths. No fixing. No performing. Just notice.
+        </div>
+      </section>
+    
+
+      <section class="card" data-card="16" aria-label="Principle 16: Balance matters">
+        <div class="card-glow"></div>
+        <div class="topline">
+          <span class="day-pill">Day 16 of 25</span>
+          <span class="icon" aria-hidden="true">⚖️</span>
+        </div>
+        <h2>Balance matters</h2>
+        <p class="principle">Too much isolation hurts. Too much noise hurts. Balance is personal, and it can change day by day.</p>
+        <div class="question-box">
+          <p class="label">Today’s question</p>
+          <p class="question">Do I need more rest, more connection, or more space?</p>
+        </div>
+        <div class="tiny-practice">
+          <strong>One-minute pause:</strong> Put both feet on the floor. Take three slow breaths. No fixing. No performing. Just notice.
+        </div>
+      </section>
+    
+
+      <section class="card" data-card="17" aria-label="Principle 17: Timing matters">
+        <div class="card-glow"></div>
+        <div class="topline">
+          <span class="day-pill">Day 17 of 25</span>
+          <span class="icon" aria-hidden="true">⏳</span>
+        </div>
+        <h2>Timing matters</h2>
+        <p class="principle">Some moments ask for action. Some ask for waiting. Some ask for help. I can learn the difference.</p>
+        <div class="question-box">
+          <p class="label">Today’s question</p>
+          <p class="question">Is this a moment to act, wait, or ask for help?</p>
+        </div>
+        <div class="tiny-practice">
+          <strong>One-minute pause:</strong> Put both feet on the floor. Take three slow breaths. No fixing. No performing. Just notice.
+        </div>
+      </section>
+    
+
+      <section class="card" data-card="18" aria-label="Principle 18: My inner life deserves care">
+        <div class="card-glow"></div>
+        <div class="topline">
+          <span class="day-pill">Day 18 of 25</span>
+          <span class="icon" aria-hidden="true">🌸</span>
+        </div>
+        <h2>My inner life deserves care</h2>
+        <p class="principle">Thoughts and feelings need tending like a garden, not judging like a courtroom.</p>
+        <div class="question-box">
+          <p class="label">Today’s question</p>
+          <p class="question">What have I been neglecting inside myself?</p>
+        </div>
+        <div class="tiny-practice">
+          <strong>One-minute pause:</strong> Put both feet on the floor. Take three slow breaths. No fixing. No performing. Just notice.
+        </div>
+      </section>
+    
+
+      <section class="card" data-card="19" aria-label="Principle 19: I can repair after mistakes">
+        <div class="card-glow"></div>
+        <div class="topline">
+          <span class="day-pill">Day 19 of 25</span>
+          <span class="icon" aria-hidden="true">🧵</span>
+        </div>
+        <h2>I can repair after mistakes</h2>
+        <p class="principle">A mistake is information. It is not a life sentence. Repair can be gentle and honest.</p>
+        <div class="question-box">
+          <p class="label">Today’s question</p>
+          <p class="question">Is there anything I can gently repair?</p>
+        </div>
+        <div class="tiny-practice">
+          <strong>One-minute pause:</strong> Put both feet on the floor. Take three slow breaths. No fixing. No performing. Just notice.
+        </div>
+      </section>
+    
+
+      <section class="card" data-card="20" aria-label="Principle 20: I am not responsible for everyone’s emotions">
+        <div class="card-glow"></div>
+        <div class="topline">
+          <span class="day-pill">Day 20 of 25</span>
+          <span class="icon" aria-hidden="true">🎈</span>
+        </div>
+        <h2>I am not responsible for everyone’s emotions</h2>
+        <p class="principle">I can care about people without carrying them. Other people’s feelings are not automatically my job.</p>
+        <div class="question-box">
+          <p class="label">Today’s question</p>
+          <p class="question">What burden was never mine to carry?</p>
+        </div>
+        <div class="tiny-practice">
+          <strong>One-minute pause:</strong> Put both feet on the floor. Take three slow breaths. No fixing. No performing. Just notice.
+        </div>
+      </section>
+    
+
+      <section class="card" data-card="21" aria-label="Principle 21: Truth feels steady, not frantic">
+        <div class="card-glow"></div>
+        <div class="topline">
+          <span class="day-pill">Day 21 of 25</span>
+          <span class="icon" aria-hidden="true">🧭</span>
+        </div>
+        <h2>Truth feels steady, not frantic</h2>
+        <p class="principle">Manipulation often rushes. Wisdom gives me room to breathe, think, and ask questions.</p>
+        <div class="question-box">
+          <p class="label">Today’s question</p>
+          <p class="question">Am I being rushed, pressured, or frightened into agreeing?</p>
+        </div>
+        <div class="tiny-practice">
+          <strong>One-minute pause:</strong> Put both feet on the floor. Take three slow breaths. No fixing. No performing. Just notice.
+        </div>
+      </section>
+    
+
+      <section class="card" data-card="22" aria-label="Principle 22: Beauty helps healing">
+        <div class="card-glow"></div>
+        <div class="topline">
+          <span class="day-pill">Day 22 of 25</span>
+          <span class="icon" aria-hidden="true">🌈</span>
+        </div>
+        <h2>Beauty helps healing</h2>
+        <p class="principle">Music, art, nature, clothes, rooms, colours, and small rituals can help me remember myself.</p>
+        <div class="question-box">
+          <p class="label">Today’s question</p>
+          <p class="question">What beauty did I notice today?</p>
+        </div>
+        <div class="tiny-practice">
+          <strong>One-minute pause:</strong> Put both feet on the floor. Take three slow breaths. No fixing. No performing. Just notice.
+        </div>
+      </section>
+    
+
+      <section class="card" data-card="23" aria-label="Principle 23: I can choose what shapes me">
+        <div class="card-glow"></div>
+        <div class="topline">
+          <span class="day-pill">Day 23 of 25</span>
+          <span class="icon" aria-hidden="true">📚</span>
+        </div>
+        <h2>I can choose what shapes me</h2>
+        <p class="principle">Books, people, videos, habits, and conversations all shape me. I get a vote.</p>
+        <div class="question-box">
+          <p class="label">Today’s question</p>
+          <p class="question">What am I letting shape my mind?</p>
+        </div>
+        <div class="tiny-practice">
+          <strong>One-minute pause:</strong> Put both feet on the floor. Take three slow breaths. No fixing. No performing. Just notice.
+        </div>
+      </section>
+    
+
+      <section class="card" data-card="24" aria-label="Principle 24: Returning is allowed">
+        <div class="card-glow"></div>
+        <div class="topline">
+          <span class="day-pill">Day 24 of 25</span>
+          <span class="icon" aria-hidden="true">🏡</span>
+        </div>
+        <h2>Returning is allowed</h2>
+        <p class="principle">If I lose myself, I can return. Return to breath, body, kindness, truth, and safe people.</p>
+        <div class="question-box">
+          <p class="label">Today’s question</p>
+          <p class="question">What helps me come back to myself?</p>
+        </div>
+        <div class="tiny-practice">
+          <strong>One-minute pause:</strong> Put both feet on the floor. Take three slow breaths. No fixing. No performing. Just notice.
+        </div>
+      </section>
+    
+
+      <section class="card" data-card="25" aria-label="Principle 25: I am becoming">
+        <div class="card-glow"></div>
+        <div class="topline">
+          <span class="day-pill">Day 25 of 25</span>
+          <span class="icon" aria-hidden="true">🌟</span>
+        </div>
+        <h2>I am becoming</h2>
+        <p class="principle">I am not finished. I am not broken beyond repair. I am becoming.</p>
+        <div class="question-box">
+          <p class="label">Today’s question</p>
+          <p class="question">What kind of person do I want to grow into?</p>
+        </div>
+        <div class="tiny-practice">
+          <strong>One-minute pause:</strong> Put both feet on the floor. Take three slow breaths. No fixing. No performing. Just notice.
+        </div>
+      </section>
+    
+    </main>
+
+    <nav class="controls" aria-label="Card navigation">
+      <button class="back" id="backBtn" type="button">← Back</button>
+      <div class="selector">
+        <label for="jump">Card</label>
+        <select id="jump" aria-label="Jump to card"></select>
+      </div>
+      <button class="next" id="nextBtn" type="button">Next →</button>
+    </nav>
+
+    <footer>
+      Built as a gentle reflection tool. Not a religion. Not a rulebook. Just a small lantern for messy human days.
+    </footer>
+  </div>
+
+  <script>
+    const cards = Array.from(document.querySelectorAll('.card'));
+    const progress = document.getElementById('progress');
+    const backBtn = document.getElementById('backBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const jump = document.getElementById('jump');
+
+    let current = Number(localStorage.getItem('gentlePrinciplesCurrent') || '1');
+    if (current < 1 || current > cards.length) current = 1;
+
+    cards.forEach((card, index) => {
+      const option = document.createElement('option');
+      option.value = String(index + 1);
+      const title = card.querySelector('h2').textContent;
+      option.textContent = `${index + 1}. ${title}`;
+      jump.appendChild(option);
+    });
+
+    function showCard(number) {
+      current = Math.min(Math.max(number, 1), cards.length);
+      cards.forEach((card, index) => {
+        card.classList.toggle('active', index + 1 === current);
+      });
+      progress.style.width = `${(current / cards.length) * 100}%`;
+      backBtn.disabled = current === 1;
+      nextBtn.disabled = current === cards.length;
+      jump.value = String(current);
+      localStorage.setItem('gentlePrinciplesCurrent', String(current));
+      document.title = `Day ${current} - 25 Gentle Principles`;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    backBtn.addEventListener('click', () => showCard(current - 1));
+    nextBtn.addEventListener('click', () => showCard(current + 1));
+    jump.addEventListener('change', () => showCard(Number(jump.value)));
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'ArrowLeft') showCard(current - 1);
+      if (event.key === 'ArrowRight') showCard(current + 1);
+    });
+
+    showCard(current);
+  </script>
+</body>
+</html>
