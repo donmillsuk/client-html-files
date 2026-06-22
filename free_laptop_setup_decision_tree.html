@@ -1,0 +1,1003 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Free Laptop Setup Decision Tree</title>
+  <style>
+    :root {
+      --bg: #f5f2ea;
+      --panel: #fffdf8;
+      --ink: #1e1f24;
+      --muted: #65656d;
+      --line: #d7d0c2;
+      --accent: #3949ab;
+      --accent-2: #0f766e;
+      --warn: #a16207;
+      --bad: #b91c1c;
+      --good: #15803d;
+      --soft-good: #e9f7ed;
+      --soft-warn: #fff6db;
+      --soft-bad: #fde8e8;
+      --soft-blue: #eaf0ff;
+      --radius: 16px;
+      --shadow: 0 8px 24px rgba(20, 20, 30, 0.08);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 10% 0%, rgba(57, 73, 171, 0.08), transparent 28rem),
+        radial-gradient(circle at 100% 10%, rgba(15, 118, 110, 0.08), transparent 24rem),
+        var(--bg);
+      line-height: 1.45;
+    }
+
+    header {
+      padding: 28px 20px 18px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(255, 253, 248, 0.82);
+      backdrop-filter: blur(8px);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .wrap { max-width: 1180px; margin: 0 auto; }
+    .topline {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+
+    h1 { margin: 0 0 8px; font-size: clamp(1.8rem, 2.8vw, 3rem); line-height: 1.05; }
+    .subtitle { margin: 0; max-width: 820px; color: var(--muted); font-size: 1rem; }
+    .small { font-size: 0.9rem; color: var(--muted); }
+
+    .toolbar { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+    button, .btn {
+      appearance: none;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--ink);
+      border-radius: 999px;
+      padding: 9px 13px;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      box-shadow: 0 1px 0 rgba(0,0,0,0.03);
+      transition: transform 0.08s ease, border-color 0.12s ease, background 0.12s ease;
+    }
+    button:hover, .btn:hover { transform: translateY(-1px); border-color: #aaa18f; }
+    button.primary, .btn.primary { background: var(--accent); color: white; border-color: var(--accent); }
+    button.good { background: var(--good); color: white; border-color: var(--good); }
+    button.warn { background: var(--warn); color: white; border-color: var(--warn); }
+    button.bad { background: var(--bad); color: white; border-color: var(--bad); }
+    button.ghost { background: transparent; }
+    button:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+
+    main { padding: 22px 20px 52px; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: minmax(260px, 340px) 1fr;
+      gap: 18px;
+      align-items: start;
+    }
+
+    @media (max-width: 920px) {
+      header { position: static; }
+      .grid { grid-template-columns: 1fr; }
+      .sidebar { position: static !important; }
+    }
+
+    .panel, .card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 142px;
+      padding: 16px;
+    }
+
+    .progressText { display: flex; justify-content: space-between; gap: 10px; margin-bottom: 8px; font-weight: 800; }
+    .progressBar {
+      height: 13px;
+      border-radius: 999px;
+      background: #eee8dc;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      margin-bottom: 14px;
+    }
+    .progressFill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent-2), var(--accent)); transition: width .2s ease; }
+
+    .currentBox {
+      padding: 13px;
+      border-radius: 14px;
+      background: var(--soft-blue);
+      border: 1px solid #bfccff;
+      margin: 14px 0;
+    }
+    .currentBox h2 { margin: 0 0 4px; font-size: 1rem; }
+    .currentBox p { margin: 0 0 10px; }
+
+    .tree {
+      margin: 14px 0 0;
+      padding: 0;
+      list-style: none;
+      max-height: 56vh;
+      overflow: auto;
+      padding-right: 4px;
+    }
+    .tree li { margin: 0; padding: 0; }
+    .tree button {
+      width: 100%;
+      border-radius: 12px;
+      margin: 3px 0;
+      justify-content: flex-start;
+      text-align: left;
+      font-weight: 700;
+      box-shadow: none;
+    }
+    .tree .phaseLabel {
+      color: var(--muted);
+      font-size: .78rem;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      margin: 12px 4px 4px;
+      font-weight: 900;
+    }
+    .dot {
+      flex: 0 0 12px;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #b7afa0;
+      border: 2px solid #fff;
+      box-shadow: 0 0 0 1px var(--line);
+    }
+    .dot.installed { background: var(--good); }
+    .dot.needs { background: var(--warn); }
+    .dot.help { background: var(--bad); }
+    .dot.skipped { background: #64748b; }
+    .dot.current { box-shadow: 0 0 0 3px rgba(57,73,171,.22); }
+
+    .intro {
+      padding: 18px;
+      margin-bottom: 18px;
+    }
+    .intro h2 { margin-top: 0; }
+    .notice {
+      border-left: 5px solid var(--warn);
+      background: var(--soft-warn);
+      padding: 12px 14px;
+      border-radius: 12px;
+      margin: 12px 0;
+    }
+    .notice.good { border-color: var(--good); background: var(--soft-good); }
+    .notice.bad { border-color: var(--bad); background: var(--soft-bad); }
+
+    .controlsRow { display: flex; gap: 8px; flex-wrap: wrap; margin: 14px 0 0; }
+
+    .phaseTitle {
+      margin: 26px 0 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .phaseTitle span {
+      font-size: .78rem;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      background: #ebe4d5;
+      color: #554d42;
+      border-radius: 999px;
+      padding: 5px 9px;
+      font-weight: 900;
+    }
+    .phaseTitle h2 { margin: 0; }
+
+    .card {
+      padding: 16px;
+      margin: 12px 0;
+      position: relative;
+      overflow: hidden;
+    }
+    .card.current { border-color: var(--accent); box-shadow: 0 0 0 4px rgba(57,73,171,.12), var(--shadow); }
+    .card.installed { background: linear-gradient(90deg, rgba(233,247,237,.75), var(--panel)); }
+    .card.needs { background: linear-gradient(90deg, rgba(255,246,219,.9), var(--panel)); }
+    .card.help { background: linear-gradient(90deg, rgba(253,232,232,.9), var(--panel)); }
+    .card.skipped { opacity: .78; }
+
+    .cardHead {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: flex-start;
+      flex-wrap: wrap;
+    }
+    .card h3 { margin: 0 0 5px; font-size: 1.25rem; }
+    .badge {
+      border-radius: 999px;
+      padding: 5px 9px;
+      font-size: .78rem;
+      font-weight: 900;
+      border: 1px solid var(--line);
+      background: #fff;
+      white-space: nowrap;
+    }
+    .badge.required { color: var(--bad); border-color: #fecaca; background: #fff5f5; }
+    .badge.optional { color: #465569; border-color: #d5dbe5; background: #f8fafc; }
+    .badge.web { color: #3949ab; border-color: #c7d2fe; background: #eef2ff; }
+
+    .card p { margin: 7px 0; }
+    .why { color: var(--muted); }
+    .statusLine { font-weight: 900; margin-top: 10px; }
+    .statusLine .stateText { padding: 2px 7px; border-radius: 999px; background: #eee8dc; }
+    .statusLine .state-installed { background: var(--soft-good); color: var(--good); }
+    .statusLine .state-needs { background: var(--soft-warn); color: var(--warn); }
+    .statusLine .state-help { background: var(--soft-bad); color: var(--bad); }
+    .statusLine .state-skipped { background: #eef2f7; color: #475569; }
+
+    .installPanel {
+      display: none;
+      margin-top: 14px;
+      border: 1px dashed #bda56f;
+      background: #fffaf0;
+      padding: 14px;
+      border-radius: 14px;
+    }
+    .card.needs .installPanel, .card.help .installPanel { display: block; }
+    .installPanel h4 { margin: 0 0 8px; }
+    .installPanel ol { margin: 8px 0 0 20px; padding: 0; }
+    .installPanel li { margin: 5px 0; }
+
+    .linkRow { display: flex; gap: 8px; flex-wrap: wrap; margin: 11px 0; }
+    code, pre {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+      background: #f1eee7;
+      border: 1px solid #ddd5c8;
+      border-radius: 8px;
+    }
+    code { padding: 2px 5px; }
+    pre { padding: 10px; overflow: auto; white-space: pre-wrap; }
+
+    details {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 10px 12px;
+      background: rgba(255,255,255,.55);
+      margin: 10px 0;
+    }
+    details summary { cursor: pointer; font-weight: 900; }
+
+    .hidden { display: none !important; }
+
+    .footerNote {
+      margin: 28px 0 0;
+      padding: 14px 16px;
+      border-radius: 14px;
+      background: #ebe4d5;
+      border: 1px solid var(--line);
+    }
+
+    @media print {
+      header { position: static; box-shadow: none; }
+      .toolbar, .sidebar, .controlsRow, button { display: none !important; }
+      body { background: white; }
+      .grid { display: block; }
+      .card, .panel { box-shadow: none; break-inside: avoid; }
+      .installPanel { display: block !important; }
+      a::after { content: " (" attr(href) ")"; font-size: .85em; color: #555; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap topline">
+      <div>
+        <h1>Free Laptop Setup Decision Tree</h1>
+        <p class="subtitle">A practical, no-subscription Windows laptop setup checklist with install routing, progress tracking, official links, and fewer opportunities for the software goblins to mug you.</p>
+        <p class="small">Prepared for Don / Doctor. Progress is saved only in this browser using localStorage.</p>
+      </div>
+      <div class="toolbar" aria-label="Page actions">
+        <button class="primary" onclick="window.print()">Print / Save PDF</button>
+        <button onclick="exportSummary()">Copy progress summary</button>
+        <button class="bad" onclick="resetAll()">Reset all</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div class="grid">
+      <aside class="panel sidebar">
+        <div class="progressText">
+          <span>Progress</span>
+          <span id="progressCount">0 / 0</span>
+        </div>
+        <div class="progressBar" aria-label="Completion progress">
+          <div id="progressFill" class="progressFill"></div>
+        </div>
+        <div id="currentBox" class="currentBox"></div>
+        <div class="controlsRow">
+          <button onclick="setFilter('all')">Show all</button>
+          <button onclick="setFilter('required')">Required only</button>
+          <button onclick="setFilter('optional')">Optional only</button>
+        </div>
+        <ul id="tree" class="tree" aria-label="Decision tree navigation"></ul>
+      </aside>
+
+      <section>
+        <div class="panel intro">
+          <h2>How to use this without needing a lie down</h2>
+          <p>Start at the top. For each item, answer <strong>Installed / Done</strong> or <strong>No, show install route</strong>. If something is missing, the route opens the official install page and gives the check step. Required items block the main route until marked done. Optional items can be skipped.</p>
+          <div class="notice good"><strong>Rule:</strong> use official links, Microsoft Store, Ninite, or UniGetUI. Do not install from advert links, “download portals,” driver-updater sites, or anything wearing a fake moustache.</div>
+          <div class="notice"><strong>Best updater path:</strong> install <strong>UniGetUI</strong> early, then use it to scan for app updates after the main installs. Keep <strong>Ninite</strong> as a simple fallback installer/updater for common apps.</div>
+        </div>
+
+        <div id="cards"></div>
+
+        <div class="footerNote">
+          <strong>Local/GitHub note:</strong> this file is fully self-contained. You can upload it to GitHub Pages or open it directly from your computer. The progress checkboxes save per browser/device, not inside the HTML file itself. Computers remain annoying, but at least this one is honest.
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    const STORAGE_KEY = "doctor_free_laptop_setup_tree_v1";
+    let filterMode = "all";
+
+    const steps = [
+      {
+        id: "windows_update",
+        phase: "0. First pass",
+        title: "Run Windows Update until clean",
+        kind: "required",
+        type: "system",
+        question: "Has Windows Update finished, restarted, and checked again?",
+        why: "Do this before installing loads of apps. Drivers, security updates, and Store components often need updating first.",
+        url: "ms-settings:windowsupdate",
+        urlLabel: "Open Windows Update settings",
+        install: "Open Settings → Windows Update → Check for updates. Restart when asked. Repeat until it stops finding important updates.",
+        verify: "Settings → Windows Update should show no important pending updates.",
+        troubleshoot: "If updates loop forever, restart manually, check internet, then run Windows Update again. Do not start adding third-party fixer tools. That road has potholes and clowns."
+      },
+      {
+        id: "remove_trialware",
+        phase: "0. First pass",
+        title: "Remove trial junk and expired offers",
+        kind: "required",
+        type: "system",
+        question: "Have trial antivirus, trial Office nags, games, and manufacturer offers been removed?",
+        why: "A new laptop often arrives carrying more junk than a charity shop cable box.",
+        url: "ms-settings:appsfeatures",
+        urlLabel: "Open Installed Apps settings",
+        install: "Open Settings → Apps → Installed apps. Remove obvious trials such as McAfee/Norton trials, trial Office prompts, unwanted games, and offer apps. Keep manufacturer support tools only if they update drivers/BIOS safely.",
+        verify: "Start menu should not show unwanted trial antivirus or trial software nagging for money.",
+        troubleshoot: "If unsure about an app, leave it and make a note. Do not uninstall drivers, audio control panels, touchpad utilities, or anything clearly tied to hardware."
+      },
+      {
+        id: "defender_check",
+        phase: "0. First pass",
+        title: "Confirm Microsoft Defender is active",
+        kind: "required",
+        type: "system",
+        question: "Is Windows Security showing virus protection active?",
+        why: "Windows Defender is built in and usually enough for ordinary safe use. Avoid stacking free antivirus programs on top like a software lasagne.",
+        url: "windowsdefender:",
+        urlLabel: "Open Windows Security",
+        install: "Open Windows Security → Virus & threat protection. Confirm protection is active. Turn on Reputation-based protection if Windows suggests it.",
+        verify: "Windows Security should show green ticks or no action needed.",
+        troubleshoot: "If Defender is disabled because of a trial antivirus, uninstall the trial antivirus and restart."
+      },
+      {
+        id: "unigetui",
+        phase: "1. Update manager",
+        title: "Install UniGetUI",
+        kind: "required",
+        type: "app",
+        question: "Is UniGetUI installed and able to open?",
+        why: "This is the one you were thinking of: a graphical app updater/installer for Windows package managers like WinGet. Very handy, slightly dangerous if clicked blindly, just like most buttons invented by humans.",
+        url: "https://devolutions.net/unigetui/",
+        urlLabel: "Official UniGetUI page",
+        altUrl: "https://github.com/Devolutions/UniGetUI",
+        altLabel: "UniGetUI GitHub releases",
+        install: "Install UniGetUI from the official page, GitHub release, or Microsoft Store if offered. Open it once after install and let it detect package managers.",
+        verify: "Start menu → UniGetUI opens. It should show software/package sections or update scanning.",
+        command: "winget search UniGetUI\n# Then install the exact UniGetUI package ID shown by winget or use the official link above.",
+        troubleshoot: "If UniGetUI will not install, use the GitHub releases page. If Windows blocks it, verify you downloaded from the official page or GitHub before approving anything."
+      },
+      {
+        id: "ninite",
+        phase: "1. Update manager",
+        title: "Create a Ninite fallback installer",
+        kind: "optional",
+        type: "app",
+        question: "Did you create and save a Ninite installer for common apps?",
+        why: "Ninite is the simple fallback: pick common apps, download one installer, run it now or later to update those apps.",
+        url: "https://ninite.com/",
+        urlLabel: "Ninite app picker",
+        install: "Open Ninite. Tick common apps such as Firefox, LibreOffice, VLC, 7-Zip, GIMP, Thunderbird, Notepad++, and any others wanted. Download and save the installer in Downloads → Installers.",
+        verify: "The custom Ninite .exe exists in an Installers folder and can be re-run later.",
+        troubleshoot: "If Ninite does not include an app, install that app directly from its official site or through UniGetUI."
+      },
+      {
+        id: "libreoffice",
+        phase: "2. Core software",
+        title: "Install LibreOffice",
+        kind: "required",
+        type: "app",
+        question: "Is LibreOffice installed and does Writer open?",
+        why: "Free office suite: documents, spreadsheets, presentations. The anti-subscription anchor of the setup.",
+        url: "https://www.libreoffice.org/download/download-libreoffice/",
+        urlLabel: "Download LibreOffice",
+        install: "Install LibreOffice. Use the standard Windows 64-bit download unless the laptop is unusual.",
+        verify: "Start menu → LibreOffice Writer opens. Save a test document if you want to be thorough.",
+        command: "winget install --id TheDocumentFoundation.LibreOffice -e",
+        troubleshoot: "If Microsoft Office trial keeps opening files, right-click a .docx → Open with → LibreOffice Writer → Always."
+      },
+      {
+        id: "bitwarden",
+        phase: "2. Core software",
+        title: "Install Bitwarden",
+        kind: "required",
+        type: "app",
+        question: "Is Bitwarden installed or at least added to the browser?",
+        why: "A password manager prevents the classic human security system: one bad password and a sticky note.",
+        url: "https://bitwarden.com/download/",
+        urlLabel: "Download Bitwarden",
+        install: "Install the Bitwarden browser extension for the main browser. Desktop app is optional. Create/sign into her own Bitwarden account.",
+        verify: "Browser toolbar should show the Bitwarden icon. She should know the master password and have it written down safely offline.",
+        command: "winget install --id Bitwarden.Bitwarden -e",
+        troubleshoot: "If she cannot handle a full password manager yet, at least set it up and save the master password securely. Do not put the master password in a file called passwords.txt. Please, civilisation has suffered enough."
+      },
+      {
+        id: "firefox",
+        phase: "2. Core software",
+        title: "Install Firefox",
+        kind: "required",
+        type: "app",
+        question: "Is Firefox installed?",
+        why: "A reliable second browser is useful when a website misbehaves. Also gives an alternative to Edge/Chrome ecosystem lock-in.",
+        url: "https://www.firefox.com/en-US/download/windows/",
+        urlLabel: "Download Firefox",
+        install: "Install Firefox. Decide later whether it should be the default browser.",
+        verify: "Start menu → Firefox opens and loads a web page.",
+        command: "winget install --id Mozilla.Firefox -e",
+        troubleshoot: "If a site requires Chrome/Edge, keep Edge available. Do not delete Edge. Windows gets emotional about that."
+      },
+      {
+        id: "pdf24",
+        phase: "2. Core software",
+        title: "Install PDF24 Creator",
+        kind: "required",
+        type: "app",
+        question: "Is PDF24 Creator installed?",
+        why: "Free PDF tools for merging, splitting, converting, compressing, and printing to PDF.",
+        url: "https://tools.pdf24.org/en/creator",
+        urlLabel: "Download PDF24 Creator",
+        install: "Install PDF24 Creator from the official PDF24 page. Keep defaults unless you know why you are changing them.",
+        verify: "Start menu → PDF24 opens. You should also see PDF24 as a printer option for creating PDFs.",
+        command: "winget search PDF24\n# Then install the exact PDF24 Creator package shown by winget, or use the official link above.",
+        troubleshoot: "If the PDF printer does not appear, restart Windows after installation. Some PDF printer drivers need the old ritual sacrifice known as rebooting."
+      },
+      {
+        id: "7zip",
+        phase: "2. Core software",
+        title: "Install 7-Zip",
+        kind: "required",
+        type: "app",
+        question: "Is 7-Zip installed?",
+        why: "Handles ZIP, 7z, RAR extraction, and compressed files properly.",
+        url: "https://www.7-zip.org/download.html",
+        urlLabel: "Official 7-Zip download",
+        install: "Install the 64-bit Windows version from 7-zip.org. Watch the address carefully: the real site has a hyphen.",
+        verify: "Right-click a file/folder and check for 7-Zip options, or open 7-Zip File Manager from Start.",
+        command: "winget install --id 7zip.7zip -e",
+        troubleshoot: "If you downloaded from a fake-looking site, stop. Uninstall it, scan with Windows Security, and reinstall only from 7-zip.org or UniGetUI/winget."
+      },
+      {
+        id: "vlc",
+        phase: "2. Core software",
+        title: "Install VLC Media Player",
+        kind: "required",
+        type: "app",
+        question: "Is VLC installed?",
+        why: "Plays most audio/video files without chasing codec packs through the underbrush.",
+        url: "https://www.videolan.org/vlc/download-windows.html",
+        urlLabel: "Download VLC for Windows",
+        install: "Install VLC from VideoLAN. Keep normal defaults.",
+        verify: "Start menu → VLC opens.",
+        command: "winget install --id VideoLAN.VLC -e",
+        troubleshoot: "If Windows asks about file defaults, you can leave defaults alone or set VLC as default for video files later."
+      },
+      {
+        id: "powertoys",
+        phase: "2. Core software",
+        title: "Install Microsoft PowerToys",
+        kind: "required",
+        type: "app",
+        question: "Is PowerToys installed and open?",
+        why: "Useful Windows utilities. Enable only the helpful pieces first: Text Extractor, Image Resizer, PowerToys Run.",
+        url: "https://learn.microsoft.com/en-us/windows/powertoys/install",
+        urlLabel: "PowerToys install guide",
+        altUrl: "https://github.com/microsoft/PowerToys/releases",
+        altLabel: "PowerToys GitHub releases",
+        install: "Install PowerToys. Open it and enable only: Text Extractor, Image Resizer, and PowerToys Run. Leave the rest off until needed.",
+        verify: "PowerToys opens from Start. Check the enabled utilities list.",
+        command: "winget install --id Microsoft.PowerToys -e",
+        troubleshoot: "If PowerToys feels overwhelming, disable everything except Text Extractor and Image Resizer. Tiny steps. Humanity may yet survive."
+      },
+      {
+        id: "everything",
+        phase: "2. Core software",
+        title: "Install Everything Search",
+        kind: "required",
+        type: "app",
+        question: "Is Everything installed and indexing?",
+        why: "Instant file-name search. Much faster than the built-in Windows search swamp.",
+        url: "https://www.voidtools.com/downloads/",
+        urlLabel: "Download Everything",
+        install: "Install Everything from voidtools. Let it index when first opened.",
+        verify: "Open Everything and search for a known file or folder name.",
+        command: "winget install --id voidtools.Everything -e",
+        troubleshoot: "If it shows no results, wait a minute for indexing, then restart Everything."
+      },
+      {
+        id: "backup_choice",
+        phase: "2. Core software",
+        title: "Choose backup/sync method",
+        kind: "required",
+        type: "system",
+        question: "Has a backup/sync method been chosen and tested?",
+        why: "A laptop without backup is just a suspense novel with hinges.",
+        url: "https://www.google.com/drive/download/",
+        urlLabel: "Google Drive for Desktop",
+        altUrl: "https://www.microsoft.com/en-gb/microsoft-365/onedrive/online-cloud-storage",
+        altLabel: "Microsoft OneDrive",
+        install: "Pick one: Google Drive for Desktop if she uses Gmail/Google, or OneDrive if she already lives in Microsoft. Sync only sensible folders, not the whole digital attic.",
+        verify: "Create a small test file in the synced folder and confirm it appears online.",
+        command: "winget search Google Drive\n# Or use OneDrive already built into Windows.",
+        troubleshoot: "If storage is limited, sync documents only. Photos/videos can devour cloud storage like a goat in a paper factory."
+      },
+      {
+        id: "gimp",
+        phase: "3. Optional useful apps",
+        title: "Install GIMP",
+        kind: "optional",
+        type: "app",
+        question: "Does she need free image editing, and is GIMP installed if yes?",
+        why: "Good free editor for photos and graphics. Skip if she only crops phone photos occasionally.",
+        url: "https://www.gimp.org/downloads/",
+        urlLabel: "Download GIMP",
+        install: "Install GIMP only if she will actually edit images. Otherwise leave it off and avoid adding clutter for sport.",
+        verify: "Start menu → GIMP opens.",
+        command: "winget install --id GIMP.GIMP -e",
+        troubleshoot: "If GIMP feels too heavy, use built-in Photos for tiny edits or Canva in the browser for simple layouts."
+      },
+      {
+        id: "sharex",
+        phase: "3. Optional useful apps",
+        title: "Install ShareX",
+        kind: "optional",
+        type: "app",
+        question: "Is ShareX installed if she needs advanced screenshots?",
+        why: "Excellent free/open-source screenshots and screen recording. Powerful enough to confuse civilians, so optional.",
+        url: "https://getsharex.com/",
+        urlLabel: "Download ShareX",
+        install: "Install ShareX if she needs better screenshots than Snipping Tool. Keep default hotkeys unless you know what you are changing.",
+        verify: "Start menu → ShareX opens. Try a region screenshot.",
+        command: "winget install --id ShareX.ShareX -e",
+        troubleshoot: "If hotkeys conflict, disable ShareX startup or change its hotkeys."
+      },
+      {
+        id: "localsend",
+        phase: "3. Optional useful apps",
+        title: "Install LocalSend",
+        kind: "optional",
+        type: "app",
+        question: "Is LocalSend installed if she needs phone/laptop file transfer?",
+        why: "Easy local file transfer between phone and laptop without emailing yourself like it is 2003.",
+        url: "https://localsend.org/download",
+        urlLabel: "Download LocalSend",
+        install: "Install LocalSend on the laptop and her phone if useful. Devices must be on the same network.",
+        verify: "Send a small photo or text note from phone to laptop.",
+        command: "winget search LocalSend\n# Then install the exact LocalSend package shown, or use the official link above.",
+        troubleshoot: "If devices cannot see each other, check both are on the same Wi-Fi and that Windows Firewall allows LocalSend."
+      },
+      {
+        id: "notes_app",
+        phase: "3. Optional useful apps",
+        title: "Choose notes app: Joplin or Obsidian",
+        kind: "optional",
+        type: "app",
+        question: "Has a notes app been chosen and installed if needed?",
+        why: "Useful if she keeps lists, recipes, study notes, or general evidence of human thought.",
+        url: "https://joplinapp.org/download/",
+        urlLabel: "Download Joplin",
+        altUrl: "https://obsidian.md/download",
+        altLabel: "Download Obsidian",
+        install: "Choose Joplin for straightforward notes/to-dos. Choose Obsidian if she likes folders, Markdown, and linked notes. Do not install both unless there is a reason.",
+        verify: "Create one note called Laptop setup test.",
+        command: "winget install --id Joplin.Joplin -e\n# or\nwinget install --id Obsidian.Obsidian -e",
+        troubleshoot: "For sync, use the app's own sync service or keep notes inside the chosen cloud folder. Avoid setting up three sync systems fighting in a sack."
+      },
+      {
+        id: "thunderbird",
+        phase: "3. Optional useful apps",
+        title: "Install Thunderbird only if she wants desktop email",
+        kind: "optional",
+        type: "app",
+        question: "Does she want desktop email, and is Thunderbird installed if yes?",
+        why: "Good free email/calendar app, but webmail may be simpler for many people.",
+        url: "https://www.thunderbird.net/en-US/",
+        urlLabel: "Download Thunderbird",
+        install: "Install Thunderbird only if she wants email in an app. Add her account using normal sign-in prompts.",
+        verify: "Thunderbird opens and receives mail.",
+        command: "winget install --id Mozilla.Thunderbird -e",
+        troubleshoot: "If Gmail blocks setup, sign in through the modern browser pop-up or check Gmail IMAP settings."
+      },
+      {
+        id: "notepadpp",
+        phase: "3. Optional useful apps",
+        title: "Install Notepad++ if she edits plain text",
+        kind: "optional",
+        type: "app",
+        question: "Is Notepad++ installed if needed?",
+        why: "Excellent free text editor. Useful for notes, logs, code snippets, CSV checks, and the little messes Windows Notepad makes interesting.",
+        url: "https://notepad-plus-plus.org/",
+        urlLabel: "Download Notepad++",
+        install: "Install Notepad++ if she handles plain text, CSV files, or code-like notes.",
+        verify: "Start menu → Notepad++ opens.",
+        command: "winget install --id Notepad++.Notepad++ -e",
+        troubleshoot: "If Windows opens .txt files in Notepad, leave it or change default app later."
+      },
+      {
+        id: "chatgpt_bookmark",
+        phase: "4. Free AI bookmarks",
+        title: "Bookmark ChatGPT Free",
+        kind: "required",
+        type: "web",
+        question: "Has ChatGPT been opened, signed in, and bookmarked?",
+        why: "General help, writing, explaining, troubleshooting, and asking the questions humans pretend they remember how to answer.",
+        url: "https://chatgpt.com/",
+        urlLabel: "Open ChatGPT",
+        install: "Open ChatGPT, sign in with her account, bookmark it in a folder called AI Help. Do not add payment details for free use.",
+        verify: "Bookmark exists and a test question works.",
+        troubleshoot: "If login fails, confirm email/password first. Avoid random third-party ChatGPT apps unless deliberately chosen."
+      },
+      {
+        id: "gemini_bookmark",
+        phase: "4. Free AI bookmarks",
+        title: "Bookmark Google Gemini Free",
+        kind: "required",
+        type: "web",
+        question: "Has Gemini been opened, signed in, and bookmarked?",
+        why: "Useful second opinion, especially if she already uses a Google account.",
+        url: "https://gemini.google.com/",
+        urlLabel: "Open Gemini",
+        install: "Open Gemini, sign in with her Google account, bookmark it in AI Help.",
+        verify: "Bookmark exists and Gemini answers a test question.",
+        troubleshoot: "If Gemini is unavailable under an account, try a personal Google account rather than a managed work/school account."
+      },
+      {
+        id: "copilot_bookmark",
+        phase: "4. Free AI bookmarks",
+        title: "Bookmark Microsoft Copilot",
+        kind: "required",
+        type: "web",
+        question: "Has Copilot been opened and bookmarked?",
+        why: "Handy if she uses Windows, Edge, Outlook, or Microsoft services.",
+        url: "https://copilot.microsoft.com/",
+        urlLabel: "Open Copilot",
+        install: "Open Copilot, sign in if useful, bookmark it in AI Help.",
+        verify: "Bookmark exists and Copilot answers a test question.",
+        troubleshoot: "If browser extensions or region/account settings get fussy, use Edge and a Microsoft account first."
+      },
+      {
+        id: "claude_bookmark",
+        phase: "4. Free AI bookmarks",
+        title: "Bookmark Claude Free",
+        kind: "required",
+        type: "web",
+        question: "Has Claude been opened, signed in, and bookmarked?",
+        why: "Good for writing, summarising, and careful long-form thinking, when usage limits allow it.",
+        url: "https://claude.ai/",
+        urlLabel: "Open Claude",
+        install: "Open Claude, create/sign into her account, bookmark it in AI Help. Free use has limits, so do not panic when it says wait.",
+        verify: "Bookmark exists and Claude answers a test question.",
+        troubleshoot: "If Claude says the limit is reached, wait for the reset or use ChatGPT/Gemini/Copilot. This is why we set up several."
+      },
+      {
+        id: "perplexity_bookmark",
+        phase: "4. Free AI bookmarks",
+        title: "Bookmark Perplexity Free",
+        kind: "optional",
+        type: "web",
+        question: "Has Perplexity been bookmarked if she wants research-style answers?",
+        why: "Good for search-style AI answers with source links.",
+        url: "https://www.perplexity.ai/",
+        urlLabel: "Open Perplexity",
+        install: "Open Perplexity and bookmark it in AI Help. Sign in if she wants history saved.",
+        verify: "Bookmark exists and Perplexity returns a sourced answer.",
+        troubleshoot: "If it pushes Pro, stay on the free version. Subscription buttons breed in captivity."
+      },
+      {
+        id: "canva_bookmark",
+        phase: "5. Useful web tools",
+        title: "Bookmark Canva Free",
+        kind: "optional",
+        type: "web",
+        question: "Has Canva been bookmarked if she wants easy design?",
+        why: "Good for cards, posters, simple social posts, and graphics without installing design software.",
+        url: "https://www.canva.com/",
+        urlLabel: "Open Canva",
+        install: "Open Canva, create/sign into account, bookmark it. Stay on free plan unless she deliberately chooses paid.",
+        verify: "Bookmark exists and she can open the Canva dashboard.",
+        troubleshoot: "If Canva asks to upgrade, choose free templates/assets only. Paid icons hide everywhere like glitter."
+      },
+      {
+        id: "m365_bookmark",
+        phase: "5. Useful web tools",
+        title: "Bookmark Microsoft 365 web apps",
+        kind: "optional",
+        type: "web",
+        question: "Have Microsoft 365 web apps been bookmarked if she has a Microsoft account?",
+        why: "Browser versions of Word/Excel/PowerPoint are useful for compatibility even when LibreOffice is the main office suite.",
+        url: "https://www.microsoft365.com/",
+        urlLabel: "Open Microsoft 365 web apps",
+        install: "Open Microsoft 365 online, sign in, bookmark it. Use the free web apps if available under her account.",
+        verify: "Can open the Microsoft 365 web dashboard.",
+        troubleshoot: "If it tries to sell a subscription, back out and use LibreOffice."
+      },
+      {
+        id: "final_unigetui_scan",
+        phase: "6. Final check",
+        title: "Run final UniGetUI update scan",
+        kind: "required",
+        type: "system",
+        question: "Has UniGetUI scanned for updates after all installs?",
+        why: "After installing everything, check for app updates once. Yes, updating the updater-updated apps is absurd. Welcome to Windows.",
+        url: "https://devolutions.net/unigetui/",
+        urlLabel: "UniGetUI help/download",
+        install: "Open UniGetUI → Software Updates → scan/check updates. Review the list. Update normal apps only. Avoid BIOS/driver/strange package changes unless you know what they are.",
+        verify: "UniGetUI shows no important app updates pending, or only items you intentionally left alone.",
+        command: "winget upgrade --all\n# Use only if comfortable reviewing command-line output.",
+        troubleshoot: "If an update fails, update that app from its official site or leave it for later. Do not start installing random updater tools to fix the updater tool. That is how the circus starts."
+      },
+      {
+        id: "final_user_note",
+        phase: "6. Final check",
+        title: "Create a simple desktop note for her",
+        kind: "required",
+        type: "system",
+        question: "Has a plain-language note been created for the laptop owner?",
+        why: "She needs to know what is installed and what not to pay for later.",
+        url: "#",
+        urlLabel: "No install link needed",
+        install: "Create a text file on the desktop called READ ME - Laptop Help.txt. Include: main browser, office app, password manager, AI bookmarks, update tool, backup location, and your warning not to buy subscriptions without asking.",
+        verify: "The desktop note exists and opens.",
+        troubleshoot: "If she hates desktop notes, put it in Documents and pin it to Quick Access. The point is that she can find it."
+      }
+    ];
+
+    function loadState() {
+      try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; }
+      catch { return {}; }
+    }
+
+    function saveState(state) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }
+
+    function getStepState(step, state) {
+      return state[step.id] || "pending";
+    }
+
+    function isComplete(step, state) {
+      const s = getStepState(step, state);
+      if (step.kind === "optional") return s === "installed" || s === "skipped";
+      return s === "installed";
+    }
+
+    function getCurrentStep(state) {
+      return steps.find(step => step.kind === "required" && !isComplete(step, state)) ||
+             steps.find(step => step.kind === "optional" && !isComplete(step, state)) ||
+             null;
+    }
+
+    function setStatus(id, status) {
+      const state = loadState();
+      state[id] = status;
+      saveState(state);
+      render();
+    }
+
+    function resetItem(id) {
+      const state = loadState();
+      delete state[id];
+      saveState(state);
+      render();
+    }
+
+    function resetAll() {
+      if (confirm("Reset all saved progress for this checklist?")) {
+        localStorage.removeItem(STORAGE_KEY);
+        render();
+      }
+    }
+
+    function setFilter(mode) {
+      filterMode = mode;
+      render();
+    }
+
+    function stateLabel(status) {
+      switch(status) {
+        case "installed": return "Installed / done";
+        case "needs": return "Install route open";
+        case "help": return "Needs attention";
+        case "skipped": return "Skipped";
+        default: return "Pending";
+      }
+    }
+
+    function dotClass(status, isCurrent) {
+      const base = status === "installed" ? "installed" : status === "needs" ? "needs" : status === "help" ? "help" : status === "skipped" ? "skipped" : "";
+      return `dot ${base} ${isCurrent ? "current" : ""}`;
+    }
+
+    function escapeHtml(str) {
+      return String(str || "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]));
+    }
+
+    function renderTree(state, current) {
+      const tree = document.getElementById("tree");
+      let html = "";
+      let lastPhase = "";
+      steps.forEach(step => {
+        const status = getStepState(step, state);
+        if (step.phase !== lastPhase) {
+          html += `<li class="phaseLabel">${escapeHtml(step.phase)}</li>`;
+          lastPhase = step.phase;
+        }
+        html += `<li><button onclick="document.getElementById('${step.id}').scrollIntoView({behavior:'smooth', block:'start'})" title="${escapeHtml(step.title)}"><span class="${dotClass(status, current && current.id === step.id)}"></span><span>${escapeHtml(step.title)}</span></button></li>`;
+      });
+      tree.innerHTML = html;
+    }
+
+    function renderCurrent(state, current) {
+      const box = document.getElementById("currentBox");
+      if (!current) {
+        box.innerHTML = `<h2>Route complete</h2><p>All required items are done. Optional items can still be reviewed, because apparently rest is illegal.</p><button onclick="window.scrollTo({top: document.body.scrollHeight, behavior: 'smooth'})">Go to final checks</button>`;
+        return;
+      }
+      const status = getStepState(current, state);
+      const action = status === "needs" || status === "help" ? "Install/fix this now" : "Answer this next";
+      box.innerHTML = `<h2>Current route</h2><p><strong>${escapeHtml(action)}:</strong><br>${escapeHtml(current.title)}</p><button class="primary" onclick="document.getElementById('${current.id}').scrollIntoView({behavior:'smooth', block:'start'})">Go to current step</button>`;
+    }
+
+    function renderProgress(state) {
+      const total = steps.length;
+      const done = steps.filter(s => isComplete(s, state)).length;
+      const percent = total ? Math.round(done / total * 100) : 0;
+      document.getElementById("progressCount").textContent = `${done} / ${total}`;
+      document.getElementById("progressFill").style.width = `${percent}%`;
+    }
+
+    function renderCards(state, current) {
+      const cards = document.getElementById("cards");
+      let html = "";
+      let lastPhase = "";
+      steps.forEach(step => {
+        if (filterMode === "required" && step.kind !== "required") return;
+        if (filterMode === "optional" && step.kind !== "optional") return;
+
+        const status = getStepState(step, state);
+        const isCurrent = current && current.id === step.id;
+        if (step.phase !== lastPhase) {
+          html += `<div class="phaseTitle"><span>${escapeHtml(step.phase)}</span><h2>${escapeHtml(step.phase.replace(/^\d+\.\s*/, ""))}</h2></div>`;
+          lastPhase = step.phase;
+        }
+
+        const typeBadge = step.type === "web" ? `<span class="badge web">Web bookmark</span>` : "";
+        const optionalButton = step.kind === "optional" ? `<button onclick="setStatus('${step.id}', 'skipped')">Not needed / skip</button>` : "";
+        const altLink = step.altUrl ? `<a class="btn" href="${step.altUrl}" target="_blank" rel="noopener">${escapeHtml(step.altLabel || "Alternate link")}</a>` : "";
+        const commandBlock = step.command ? `<details><summary>Terminal option</summary><pre>${escapeHtml(step.command)}</pre><button onclick="copyText(${JSON.stringify(step.command)})">Copy command</button></details>` : "";
+        const urlLink = step.url && step.url !== "#" ? `<a class="btn primary" href="${step.url}" target="_blank" rel="noopener">${escapeHtml(step.urlLabel || "Open official link")}</a>` : "";
+
+        html += `
+          <article id="${step.id}" class="card ${isCurrent ? "current" : ""} ${status === "installed" ? "installed" : status === "needs" ? "needs" : status === "help" ? "help" : status === "skipped" ? "skipped" : ""}">
+            <div class="cardHead">
+              <div>
+                <h3>${escapeHtml(step.title)}</h3>
+                <p class="why">${escapeHtml(step.why)}</p>
+              </div>
+              <div>
+                <span class="badge ${step.kind === "required" ? "required" : "optional"}">${step.kind === "required" ? "Required" : "Optional"}</span>
+                ${typeBadge}
+              </div>
+            </div>
+
+            <p><strong>Decision:</strong> ${escapeHtml(step.question)}</p>
+            <p class="statusLine">Status: <span class="stateText state-${status}">${stateLabel(status)}</span></p>
+
+            <div class="controlsRow">
+              <button class="good" onclick="setStatus('${step.id}', 'installed')">Yes, installed / done</button>
+              <button class="warn" onclick="setStatus('${step.id}', 'needs')">No, show install route</button>
+              ${optionalButton}
+              <button class="ghost" onclick="resetItem('${step.id}')">Reset this item</button>
+            </div>
+
+            <div class="installPanel">
+              <h4>Install route</h4>
+              <p>${escapeHtml(step.install)}</p>
+              <div class="linkRow">${urlLink}${altLink}</div>
+              ${commandBlock}
+              <ol>
+                <li>Use the official link above, Microsoft Store, Ninite, or UniGetUI.</li>
+                <li>Install using normal defaults unless you have a specific reason not to.</li>
+                <li><strong>Verify:</strong> ${escapeHtml(step.verify)}</li>
+                <li>Then click <strong>Yes, installed / done</strong> on this card.</li>
+              </ol>
+              <details ${status === "help" ? "open" : ""}>
+                <summary>Something went wrong</summary>
+                <p>${escapeHtml(step.troubleshoot || "Restart, try the official link again, and avoid mystery download sites.")}</p>
+                <button class="bad" onclick="setStatus('${step.id}', 'help')">Mark as needs attention</button>
+              </details>
+            </div>
+          </article>
+        `;
+      });
+      cards.innerHTML = html;
+    }
+
+    function render() {
+      const state = loadState();
+      const current = getCurrentStep(state);
+      renderProgress(state);
+      renderCurrent(state, current);
+      renderTree(state, current);
+      renderCards(state, current);
+    }
+
+    async function copyText(text) {
+      try {
+        await navigator.clipboard.writeText(text);
+        alert("Copied to clipboard.");
+      } catch (err) {
+        alert("Could not copy automatically. Select the text and copy manually.");
+      }
+    }
+
+    async function exportSummary() {
+      const state = loadState();
+      const lines = [];
+      lines.push("Free Laptop Setup Progress Summary");
+      lines.push("Generated: " + new Date().toLocaleString());
+      lines.push("");
+      steps.forEach(step => {
+        lines.push(`[${stateLabel(getStepState(step, state))}] ${step.title}`);
+      });
+      const text = lines.join("\n");
+      await copyText(text);
+    }
+
+    render();
+  </script>
+</body>
+</html>
